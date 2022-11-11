@@ -16,6 +16,8 @@ class VideoParsing:
             print('Segment File Path Not Found')
             return 
 
+        # if the given output path is None then create an output directory called segments
+        
         if not os.path.exists(output_dir):
             output_dir = './segments/'
             os.mkdir(output_dir)
@@ -37,6 +39,7 @@ class VideoParsing:
 
     def frame_extraction(self, sample_rate = 20, output_dir = None):
         
+        # if the given output path is None then create a directory called frames
         if not os.path.exists(output_dir):
             output_dir = './frames/'
             os.mkdir(output_dir)

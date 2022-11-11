@@ -3,7 +3,7 @@ from clarifai_grpc.channel.clarifai_channel import ClarifaiChannel
 from clarifai_grpc.grpc.api import resources_pb2, service_pb2, service_pb2_grpc
 from clarifai_grpc.grpc.api.status import status_code_pb2
 
-
+import cv2
 
 
 
@@ -17,6 +17,7 @@ class VisualFeatures:
         self.stub = service_pb2_grpc.V2Stub(channel)
 
         self.metadata = (('authorization', 'Key ' + YOUR_PERSONAL_TOKEN),)
+        self.userDataObject = resources_pb2.UserAppIDSet(user_id='clarifai', app_id='main')
 
 
     def weapon_detection(self, frame):
@@ -24,12 +25,9 @@ class VisualFeatures:
         weapons_dict = {}
         success, encoded_image = cv2.imencode('.png', frame)
         file_bytes = encoded_image.tobytes()
-
-        userDataObject = resources_pb2.UserAppIDSet(user_id='clarifai', app_id='main')
-
         post_model_outputs_response = self.stub.PostModelOutputs(
             service_pb2.PostModelOutputsRequest(
-                user_app_id=userDataObject,
+                user_app_id=self.userDataObject,
                 model_id='weapon-detection',
                 inputs=[
                     resources_pb2.Input(
@@ -56,6 +54,48 @@ class VisualFeatures:
         
 
         return weapons_dict
+
+
+    def text_ocr(self, frame):
+        # text ocr ClarifAI 
+
+        text_ocr_list = []
+        success, encoded_image = cv2.imencode('.png', frame)
+        file_bytes = encoded_image.tobytes()
+
+        post_model_outputs_response = stub.PostModelOutputs(
+            service_pb2.PostModelOutputsRequest(
+                user_app_id=userDataObject,
+                model_id='ocr-scene-english-paddleocr',
+                inputs=[
+                    resources_pb2.Input(
+                        data=resources_pb2.Data(
+                            image=resources_pb2.Image(base64=content2)
+                        )
+                    )
+                ]
+            ),
+            metadata=metadata
+        )
+
+
+        output = post_model_outputs_response.outputs[0]
+
+        
+        
+        for regions in output.data.regions:
+        # print(regions.data.concepts)
+            text_ocr_list.append(regions.data.text.raw)
+            
+        
+
+        return text_ocr_list
+
+    
+
+
+
+    
 
 
 

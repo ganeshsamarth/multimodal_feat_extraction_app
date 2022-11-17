@@ -35,8 +35,6 @@ class VideoParsing:
                 ffmpeg_extract_subclip(required_video_file, starttime, endtime, 
                                     targetname=  os.path.join(output_dir, str(times.index(time)+1)+".mp4"))
 
-        return
-
 
     def frame_extraction(self, sample_rate = 20, output_dir = None):
         
@@ -60,7 +58,7 @@ class VideoParsing:
         video.release()
         cv2.destroyAllWindows()
 
-    def audio_extraction(self,, audio_path = None):
+    def audio_extraction(self,audio_path = None):
 
         
         extension = '.' + self.video_path.split('.')[-1]
@@ -79,7 +77,6 @@ class VideoParsing:
         myclip.audio.write_audiofile(audio_path)
 
         print('Audio Extracted')
-        return
 
 
 

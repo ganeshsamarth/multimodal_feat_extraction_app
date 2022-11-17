@@ -112,14 +112,21 @@ class ObjectFeatures:
     
     def get_predictions(self, image):
 
+
+        # output for each image is class : list of confidence scores
+        
         output = self.predictor(image)
         instances = outputs["instances"]
         scores = instances.get_fields()["scores"].tolist()
         pred_classes = instances.get_fields()["pred_classes"].tolist()
         output_classes = list(map(lambda x: classes_dict[x+1], pred_classes))
-        response = {
-            "scores": scores,
-            "pred_classes": output_classes
-        }
 
-        return response
+        output_dict = {}
+        for i, classes in enumerate(pred_classes):
+
+            if classes in output_dict:
+                output_dict[classes].append(scores[i])
+            else:
+                output_dict[classes] = [scores[i]]
+
+        return output_dict

@@ -1,12 +1,10 @@
-# Visual Feature Outputs - Weapons + Objects
+# Visual Feature Outputs - Weapons + Objects + textOCR
+
 from clarifai_grpc.channel.clarifai_channel import ClarifaiChannel
 from clarifai_grpc.grpc.api import resources_pb2, service_pb2, service_pb2_grpc
 from clarifai_grpc.grpc.api.status import status_code_pb2
-
+from object_level_features import ObjectFeatures
 import cv2
-
-
-
 
 class VisualFeatures:
 
@@ -18,7 +16,7 @@ class VisualFeatures:
 
         self.metadata = (('authorization', 'Key ' + YOUR_PERSONAL_TOKEN),)
         self.userDataObject = resources_pb2.UserAppIDSet(user_id='clarifai', app_id='main')
-
+        self.obj_detection = ObjectFeatures()
 
     def weapon_detection(self, frame):
         # frame is a numpy array
@@ -92,6 +90,11 @@ class VisualFeatures:
         return text_ocr_list
 
     
+    def object_detection(self, frame):
+
+        return self.obj_detection.get_predictions(frame)
+
+
 
 
 

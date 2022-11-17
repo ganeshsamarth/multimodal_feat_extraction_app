@@ -3,6 +3,12 @@
 from clarifai_grpc.channel.clarifai_channel import ClarifaiChannel
 from clarifai_grpc.grpc.api import resources_pb2, service_pb2, service_pb2_grpc
 from clarifai_grpc.grpc.api.status import status_code_pb2
+import detectron2
+from detectron2 import model_zoo
+from detectron2.engine import DefaultPredictor
+from detectron2.config import get_cfg
+
+
 from object_level_features import ObjectFeatures
 import cv2
 
@@ -56,7 +62,6 @@ class VisualFeatures:
 
     def text_ocr(self, frame):
         # text ocr ClarifAI 
-
         text_ocr_list = []
         success, encoded_image = cv2.imencode('.png', frame)
         file_bytes = encoded_image.tobytes()
@@ -76,13 +81,8 @@ class VisualFeatures:
             metadata=metadata
         )
 
-
         output = post_model_outputs_response.outputs[0]
-
-        
-        
         for regions in output.data.regions:
-        # print(regions.data.concepts)
             text_ocr_list.append(regions.data.text.raw)
             
         

@@ -11,8 +11,6 @@ import cv2
 from detectron2 import model_zoo
 from detectron2.engine import DefaultPredictor
 from detectron2.config import get_cfg
-from detectron2.utils.visualizer import Visualizer
-from detectron2.data import MetadataCatalog
 
 
 class ObjectFeatures:
@@ -114,7 +112,7 @@ class ObjectFeatures:
 
 
         # output for each image is class : list of confidence scores
-        
+
         output = self.predictor(image)
         instances = outputs["instances"]
         scores = instances.get_fields()["scores"].tolist()

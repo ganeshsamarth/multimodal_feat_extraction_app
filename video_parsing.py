@@ -1,9 +1,10 @@
-# Given a path to a video extract frames or segments
+# Given a path to a video extract Segments, Frames and Audio
 
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 import os
 import cv2
 from random import sample
+import moviepy.editor as mp
 
 class VideoParsing:
 
@@ -58,6 +59,28 @@ class VideoParsing:
 
         video.release()
         cv2.destroyAllWindows()
+
+    def audio_extraction(self,, audio_path = None):
+
+        
+        extension = '.' + self.video_path.split('.')[-1]
+        name = self.video_path.split('/')[-1].replace(extension, '')
+        name = name + '.wav'
+
+        default_audio_path = './extracted_audio/'
+        if audio_path is None:
+            
+            if not os.path.exists(default_audio_path):
+                os.mkdir(default_audio_path)
+                
+            audio_path = os.path.join(default_audio_path, name)
+
+        my_clip = mp.VideoFileClip(self.video_path)
+        myclip.audio.write_audiofile(audio_path)
+
+        print('Audio Extracted')
+        return
+
 
 
 

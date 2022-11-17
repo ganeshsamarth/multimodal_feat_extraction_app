@@ -1,5 +1,8 @@
 # Given a path to a video extract Segments, Frames and Audio
-
+# Each of these elements of the video are saved in the default that includes 
+# frames/<VIDEO_NAME>/frame_count.jpg
+# segments/<VIDEO_NAME>/segment_count.mp4
+# audio/<VIDEO_NAME>.wav
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 import os
 import cv2
@@ -10,6 +13,8 @@ class VideoParsing:
 
     def __init__(self, video_path):
         self.video_path = video_path
+        self.extension = '.' + self.video_path.split('.')[-1]
+        self.name = self.video_path.split('/')[-1].replace(extension, '')
 
     def segment_extraction(self,segment_timestamp_file_path = None, output_dir = None):
 
@@ -22,6 +27,8 @@ class VideoParsing:
         if not os.path.exists(output_dir):
             output_dir = './segments/'
             os.mkdir(output_dir)
+            os.mkdir(output_dir + self.name)
+            output_dir = os.path.join(output_dir, self.name)
 
         with open(segment_timestamp_file_path) as f:
 
@@ -42,6 +49,8 @@ class VideoParsing:
         if not os.path.exists(output_dir):
             output_dir = './frames/'
             os.mkdir(output_dir)
+            os.mkdir(output_dir + self.name)
+            output_dir = os.path.join(output_dir, self.name)
 
         video = cv2.VideoCapture(self.video_path)
         count = 0
@@ -61,11 +70,10 @@ class VideoParsing:
     def audio_extraction(self,audio_path = None):
 
         
-        extension = '.' + self.video_path.split('.')[-1]
-        name = self.video_path.split('/')[-1].replace(extension, '')
-        name = name + '.wav'
+        
+        name = self.name + '.wav'
 
-        default_audio_path = './extracted_audio/'
+        default_audio_path = './audio/'
         if audio_path is None:
             
             if not os.path.exists(default_audio_path):

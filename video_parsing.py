@@ -70,8 +70,6 @@ class VideoParsing:
 
     def audio_extraction(self,audio_path = None):
 
-        
-        
         name = self.name + '.wav'
 
         default_audio_path = './audio/'

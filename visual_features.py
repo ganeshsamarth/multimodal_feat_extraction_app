@@ -50,11 +50,11 @@ class VisualFeatures:
         threshold = 0.8
         for regions in output.data.regions:
         # print(regions.data.concepts)
-        if regions.value > threshold:
-            if regions.data.concepts[0].name in weapons_dict:
-            weapons_dict[regions.data.concepts[0].name].append(regions.value)
-            else:
-            weapons_dict[regions.data.concepts[0].name] = [regions.value]
+            if regions.value > threshold:
+                if regions.data.concepts[0].name in weapons_dict:
+                weapons_dict[regions.data.concepts[0].name].append(regions.value)
+                else:
+                weapons_dict[regions.data.concepts[0].name] = [regions.value]
         
 
         return weapons_dict

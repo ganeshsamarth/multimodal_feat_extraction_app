@@ -11,6 +11,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import transforms as transforms
+from models.vgg import VGG
+
 
 class FaceFeatures:
 

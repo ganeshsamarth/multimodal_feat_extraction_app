@@ -3,6 +3,8 @@ from multimodal_feat_extraction_app.video_parsing import VideoParsing
 import cv2
 import argparse
 import os
+import json
+
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
@@ -12,6 +14,7 @@ if __name__ == '__main__':
     parser.add_argument('--weapons', type=bool, default=True)
     parser.add_argument('--ocr', type=bool, default=True)
     parser.add_argument('--objects', type=bool, default=True)
+    parser.add_argument('--save_json', type=str, default='save_file.json')
 
     args = parser.parse_args()
     video_parser = VideoParsing(args.video_path)
@@ -20,19 +23,25 @@ if __name__ == '__main__':
     extractor = VisualFeatures()
     entries = os.listdir(args.frame_location)
 
-    features = []
+    features = {}
 
     for entry in entries:
         print("Processing Frame:", entry)
         img = cv2.imread(entry)
+        features[entry] = []
         if args.weapons:
             output = extractor.weapon_detection(img)
-            features.append({entry:output})
+            features[entry].append(output)
         if args.ocr:
             output = extractor.text_ocr(img)
-            features.append({entry:output})
+            features[entry].append(output)
         if args.objects:
             output = extractor.object_detection(img)
-            features.append({entry:output})
+            features[entry].append(output)
     
+    # json_object = json.dumps(features, indent = 4) 
+    with open(args.save_json, 'w') as f:
+        json.dump(features, f)
+
+
         

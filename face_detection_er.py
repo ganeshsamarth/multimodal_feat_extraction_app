@@ -12,7 +12,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import transforms as transforms
 from models.vgg import VGG
-
+import cv2
 
 class FaceFeatures:
 
@@ -25,7 +25,8 @@ class FaceFeatures:
             transforms.TenCrop(cut_size),
             transforms.Lambda(lambda crops: torch.stack([transforms.ToTensor()(crop) for crop in crops])),
         ])
-        checkpoint = torch.load(os.path.join("FER2013_VGG19", "PrivateTest_model.t7"), map_location = self.device)
+        # checkpoint = torch.load(os.path.join("./FER2013_VGG19", "PrivateTest_model.t7"), map_location = self.device)
+        checkpoint = torch.load('/content/multimodal_feat_extraction_app/FER2013_VGG19/PrivateTest_model.t7',map_location=self.device)
         
         self.fer_model = VGG('VGG19')
         self.fer_model.load_state_dict(checkpoint['net'])
@@ -43,10 +44,10 @@ class FaceFeatures:
 
         return prediction
     
-    def crop_faces(self, frame_face_pred):
+    def crop_faces(self, frame, frame_face_pred):
         
         crop_face_list = []
-        for faces in frame_face_pred:
+        for face in frame_face_pred:
             x, y, w, h = face["box"][0], face["box"][1], face["box"][2], face["box"][3] # crop the detected face\
             cropped_face = frame[y:y+h, x:x+w]
             # convert to grayscale
@@ -76,7 +77,7 @@ class FaceFeatures:
             fer_logits = self.fer_model(inputs) # face emotion recognition
             fer_logits = fer_logits.view(ncrops, -1).mean(0)
             score = F.softmax(fer_logits, dim=0)
-            frame_emotion += score.detach().numpy()
+            frame_emotion += score.cpu().detach().numpy()
         
         frame_emotion/=len(crop_face_list)
 

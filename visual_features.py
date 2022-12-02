@@ -9,8 +9,10 @@ from detectron2.engine import DefaultPredictor
 from detectron2.config import get_cfg
 
 
-from multimodal_feat_extraction_app.object_level_features import ObjectFeatures
+from object_level_features import ObjectFeatures
 import cv2
+
+from face_detection_er import *
 
 class VisualFeatures:
 
@@ -23,6 +25,7 @@ class VisualFeatures:
         self.metadata = (('authorization', 'Key ' + PERSONAL_TOKEN),)
         self.userDataObject = resources_pb2.UserAppIDSet(user_id='clarifai', app_id='main')
         self.obj_detection = ObjectFeatures()
+        self.emo_recognition = FaceFeatures()
 
     def weapon_detection(self, frame):
         # frame is a numpy array
@@ -93,6 +96,13 @@ class VisualFeatures:
     def object_detection(self, frame):
 
         return self.obj_detection.get_predictions(frame)
+    
+    def emotion_recognition(self,frame):
+        faces = self.emo_recognition.get_face_output(frame)
+        cropped_faces = self.emo_recognition.crop_faces(frame,faces)
+        outputs = self.emo_recognition.get_emotion(cropped_faces)
+        return list(outputs)
+
 
 
 

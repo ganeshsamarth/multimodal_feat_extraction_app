@@ -15,7 +15,7 @@ class VideoParsing:
     def __init__(self, video_path):
         self.video_path = video_path
         self.extension = '.' + self.video_path.split('.')[-1]
-        self.name = self.video_path.split('/')[-1].replace(extension, '')
+        self.name = self.video_path.split('/')[-1].replace(self.extension, '')
 
     def segment_extraction(self,segment_timestamp_file_path = None, output_dir = None):
 
@@ -61,7 +61,7 @@ class VideoParsing:
                 break
             
             if count%sample_rate==0:
-                cv2.imwrite(os.path.join(output_dir, str(count) + 'jpg'), frame)
+                cv2.imwrite(os.path.join(output_dir, str(count) + '.jpg'), frame)
             
             count+=1
 

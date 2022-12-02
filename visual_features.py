@@ -9,7 +9,7 @@ from detectron2.engine import DefaultPredictor
 from detectron2.config import get_cfg
 
 
-from object_level_features import ObjectFeatures
+from multimodal_feat_extraction_app.object_level_features import ObjectFeatures
 import cv2
 
 class VisualFeatures:
@@ -20,7 +20,7 @@ class VisualFeatures:
         channel = ClarifaiChannel.get_grpc_channel()
         self.stub = service_pb2_grpc.V2Stub(channel)
 
-        self.metadata = (('authorization', 'Key ' + YOUR_PERSONAL_TOKEN),)
+        self.metadata = (('authorization', 'Key ' + PERSONAL_TOKEN),)
         self.userDataObject = resources_pb2.UserAppIDSet(user_id='clarifai', app_id='main')
         self.obj_detection = ObjectFeatures()
 
@@ -36,7 +36,7 @@ class VisualFeatures:
                 inputs=[
                     resources_pb2.Input(
                         data=resources_pb2.Data(
-                            image = resources_pb2.Video(base64=file_bytes)
+                            image = resources_pb2.Image(base64=file_bytes)
                         )
                     )
                 ]
@@ -66,19 +66,19 @@ class VisualFeatures:
         success, encoded_image = cv2.imencode('.png', frame)
         file_bytes = encoded_image.tobytes()
 
-        post_model_outputs_response = stub.PostModelOutputs(
+        post_model_outputs_response = self.stub.PostModelOutputs(
             service_pb2.PostModelOutputsRequest(
-                user_app_id=userDataObject,
+                user_app_id=self.userDataObject,
                 model_id='ocr-scene-english-paddleocr',
                 inputs=[
                     resources_pb2.Input(
                         data=resources_pb2.Data(
-                            image=resources_pb2.Image(base64=content2)
+                            image=resources_pb2.Image(base64=file_bytes)
                         )
                     )
                 ]
             ),
-            metadata=metadata
+            metadata=self.metadata
         )
 
         output = post_model_outputs_response.outputs[0]

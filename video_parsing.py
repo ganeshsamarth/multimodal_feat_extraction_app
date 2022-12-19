@@ -40,7 +40,7 @@ class VideoParsing:
                 starttime = float(time.split("-")[0])
                 endtime = float(time.split("-")[1])
 
-                ffmpeg_extract_subclip(required_video_file, starttime, endtime, 
+                ffmpeg_extract_subclip(self.video_path, starttime, endtime, 
                                     targetname=  os.path.join(output_dir, str(times.index(time)+1)+".mp4"))
 
 
